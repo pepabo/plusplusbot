@@ -72,7 +72,9 @@ func (b *Bot) Start() {
 	b.logger.Debug("Starting bot...")
 	go b.handleEvents()
 	b.logger.Debug("Starting socket mode client...")
-	b.socketClient.Run()
+	if err := b.socketClient.Run(); err != nil {
+		b.logger.Error("Error running socket client", "error", err)
+	}
 }
 
 type PointOperation int
@@ -184,9 +186,10 @@ func (b *Bot) handlePointChangeMessage(ev *slackevents.MessageEvent, operation P
 
 	// Send messages
 	var message string
-	if operation == PointDown {
+	switch operation {
+	case PointDown:
 		message = getFormattedMessage(MinusPointsMessage, userID, points)
-	} else if operation == PointUp {
+	case PointUp:
 		message = getFormattedMessage(PlusPointsMessage, userID, points)
 	}
 

@@ -13,7 +13,9 @@ func setupTestDB(t *testing.T) (*SQLiteDB, func()) {
 	if err != nil {
 		t.Fatalf("Failed to create temp file: %v", err)
 	}
-	tempFile.Close() // Close the file as SQLite will open it
+	if err := tempFile.Close(); err != nil {
+		t.Fatalf("Failed to close temp file: %v", err)
+	}
 
 	// Create a logger that only shows error level logs
 	logger := slog.New(slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{
@@ -22,14 +24,20 @@ func setupTestDB(t *testing.T) (*SQLiteDB, func()) {
 
 	db, err := DatabaseNew(tempFile.Name(), logger)
 	if err != nil {
-		os.Remove(tempFile.Name())
+		if err := os.Remove(tempFile.Name()); err != nil {
+			t.Logf("Failed to remove temp file: %v", err)
+		}
 		t.Fatalf("Failed to create test database: %v", err)
 	}
 
 	// Return cleanup function
 	cleanup := func() {
-		db.db.Close()
-		os.Remove(tempFile.Name())
+		if err := db.db.Close(); err != nil {
+			t.Logf("Failed to close database: %v", err)
+		}
+		if err := os.Remove(tempFile.Name()); err != nil {
+			t.Logf("Failed to remove temp file: %v", err)
+		}
 	}
 
 	return db, cleanup
