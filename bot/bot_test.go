@@ -13,7 +13,9 @@ func setupTestBot(t *testing.T) (*Bot, func()) {
 	if err != nil {
 		t.Fatalf("Failed to create temp file: %v", err)
 	}
-	tempFile.Close() // Close the file as SQLite will open it
+	if err := tempFile.Close(); err != nil {
+		t.Fatalf("Failed to close temp file: %v", err)
+	}
 
 	// Create a logger that only shows error level logs
 	logger := slog.New(slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{
@@ -23,14 +25,20 @@ func setupTestBot(t *testing.T) (*Bot, func()) {
 	// Create a test bot with dummy tokens
 	bot, err := New("dummy-bot-token", "dummy-app-token", tempFile.Name(), false, logger)
 	if err != nil {
-		os.Remove(tempFile.Name())
+		if err := os.Remove(tempFile.Name()); err != nil {
+			t.Logf("Failed to remove temp file: %v", err)
+		}
 		t.Fatalf("Failed to create test bot: %v", err)
 	}
 
 	// Return cleanup function
 	cleanup := func() {
-		bot.db.(*SQLiteDB).db.Close()
-		os.Remove(tempFile.Name())
+		if err := bot.db.(*SQLiteDB).db.Close(); err != nil {
+			t.Logf("Failed to close database: %v", err)
+		}
+		if err := os.Remove(tempFile.Name()); err != nil {
+			t.Logf("Failed to remove temp file: %v", err)
+		}
 	}
 
 	return bot, cleanup
