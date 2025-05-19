@@ -5,12 +5,13 @@ import (
 	"os"
 
 	"plusplusbot/bot"
+	"plusplusbot/infra/config"
+	"plusplusbot/infra/repository"
 )
 
 func main() {
 	botToken := os.Getenv("SLACK_BOT_TOKEN")
 	appToken := os.Getenv("SLACK_APP_TOKEN")
-	dbConnStr := os.Getenv("DATABASE_URL")
 
 	// Initialize logger
 	var level slog.Level
@@ -23,13 +24,24 @@ func main() {
 		Level: level,
 	}))
 
-	if dbConnStr == "" {
+	// Load configuration
+	cfg := config.NewConfig()
+
+	if cfg.RepositoryType == config.SQLiteRepository && cfg.SQLiteDBPath == "" {
 		logger.Error("DATABASE_URL environment variable is not set")
 		os.Exit(1)
 	}
 
+	// Initialize repository
+	repo, err := repository.NewRepository(cfg, logger)
+	if err != nil {
+		logger.Error("Failed to create repository", "error", err)
+		os.Exit(1)
+	}
+
+	// Initialize bot
 	verbose := os.Getenv("DEBUG") != ""
-	bot, err := bot.New(botToken, appToken, dbConnStr, verbose, logger)
+	bot, err := bot.New(botToken, appToken, repo, verbose, logger)
 	if err != nil {
 		logger.Error("Failed to create bot", "error", err)
 		os.Exit(1)

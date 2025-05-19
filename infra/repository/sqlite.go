@@ -1,6 +1,7 @@
-package bot
+package repository
 
 import (
+	"context"
 	"database/sql"
 	"log/slog"
 
@@ -8,26 +9,20 @@ import (
 	_ "github.com/ncruces/go-sqlite3/embed"
 )
 
-// Database interface defines the methods for database operations
-type Database interface {
-	AddPoints(userID string, points int, is_user bool) error
-	GetPoints(userID string) (int, error)
-}
-
-// SQLiteDB implements the Database interface
-type SQLiteDB struct {
+// SQLiteRepository implements the UserPointsRepository interface using SQLite
+type SQLiteRepository struct {
 	db     *sql.DB
 	logger *slog.Logger
 }
 
-// NewSQLiteDB creates a new SQLiteDB instance
-func DatabaseNew(dbPath string, logger *slog.Logger) (*SQLiteDB, error) {
+// NewSQLiteRepository creates a new SQLiteRepository instance
+func NewSQLiteRepository(dbPath string, logger *slog.Logger) (*SQLiteRepository, error) {
 	db, err := sql.Open("sqlite3", dbPath)
 	if err != nil {
 		return nil, err
 	}
 
-	sqlitedb := &SQLiteDB{
+	sqliteRepo := &SQLiteRepository{
 		db:     db,
 		logger: logger,
 	}
@@ -65,12 +60,12 @@ func DatabaseNew(dbPath string, logger *slog.Logger) (*SQLiteDB, error) {
 		return nil, err
 	}
 
-	return sqlitedb, nil
+	return sqliteRepo, nil
 }
 
 // AddPoints adds points to a user
-func (s *SQLiteDB) AddPoints(userID string, points int, is_user bool) error {
-	_, err := s.db.Exec(`
+func (s *SQLiteRepository) AddPoints(ctx context.Context, userID string, points int, isUser bool) error {
+	_, err := s.db.ExecContext(ctx, `
 		INSERT INTO user_points (user_id, points, is_user)
 		VALUES (?, ?, ?)
 		ON CONFLICT (user_id)
@@ -78,16 +73,21 @@ func (s *SQLiteDB) AddPoints(userID string, points int, is_user bool) error {
 			points = points + ?,
 			is_user = ?,
 			last_modified = CURRENT_TIMESTAMP
-	`, userID, points, is_user, points, is_user)
+	`, userID, points, isUser, points, isUser)
 	return err
 }
 
 // GetPoints gets the current points for a user
-func (s *SQLiteDB) GetPoints(userID string) (int, error) {
+func (s *SQLiteRepository) GetPoints(ctx context.Context, userID string) (int, error) {
 	var points int
-	err := s.db.QueryRow("SELECT points FROM user_points WHERE user_id = ?", userID).Scan(&points)
+	err := s.db.QueryRowContext(ctx, "SELECT points FROM user_points WHERE user_id = ?", userID).Scan(&points)
 	if err == sql.ErrNoRows {
 		return 0, nil
 	}
 	return points, err
+}
+
+// Close closes the database connection
+func (s *SQLiteRepository) Close() error {
+	return s.db.Close()
 }

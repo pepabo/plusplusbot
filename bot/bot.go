@@ -1,9 +1,11 @@
 package bot
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"log/slog"
+	"plusplusbot/infra/repository"
 	"regexp"
 
 	"github.com/slack-go/slack"
@@ -27,21 +29,14 @@ type Bot struct {
 	socketClient *socketmode.Client
 	verbose      bool
 	logger       *slog.Logger
-	db           Database
+	repo         repository.UserPointsRepository
 }
 
 // New creates a new Slack bot instance
-func New(botToken, appToken, dbConnStr string, verbose bool, logger *slog.Logger) (*Bot, error) {
+func New(botToken, appToken string, repo repository.UserPointsRepository, verbose bool, logger *slog.Logger) (*Bot, error) {
 	if botToken == "" || appToken == "" {
 		return nil, fmt.Errorf("SLACK_BOT_TOKEN or SLACK_APP_TOKEN is not set")
 	}
-
-	// Initialize database
-	db, err := DatabaseNew(dbConnStr, logger)
-	if err != nil {
-		return nil, fmt.Errorf("failed to initialize database: %w", err)
-	}
-	logger.Info("Database connected")
 
 	api := slack.New(
 		botToken,
@@ -63,7 +58,7 @@ func New(botToken, appToken, dbConnStr string, verbose bool, logger *slog.Logger
 		socketClient: socketClient,
 		verbose:      verbose,
 		logger:       logger,
-		db:           db,
+		repo:         repo,
 	}, nil
 }
 
@@ -172,13 +167,14 @@ func (b *Bot) handlePointChangeMessage(ev *slackevents.MessageEvent, operation P
 	}
 
 	// Add points to the user
-	if err := b.db.AddPoints(userID, pointsChange, is_user); err != nil {
+	ctx := context.Background()
+	if err := b.repo.AddPoints(ctx, userID, pointsChange, is_user); err != nil {
 		b.logger.Error("Error adding points", "error", err)
 		return
 	}
 
 	// Get current points
-	points, err := b.db.GetPoints(userID)
+	points, err := b.repo.GetPoints(ctx, userID)
 	if err != nil {
 		b.logger.Error("Error getting points", "error", err)
 		return
@@ -209,7 +205,8 @@ func (b *Bot) handlePointCheckMessage(ev *slackevents.MessageEvent) {
 		return
 	}
 
-	points, err := b.db.GetPoints(userID)
+	ctx := context.Background()
+	points, err := b.repo.GetPoints(ctx, userID)
 	if err != nil {
 		b.logger.Error("Error getting points", "error", err)
 		return
