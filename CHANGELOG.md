@@ -1,5 +1,8 @@
 # Changelog
 
+## [v1.1.2](https://github.com/pepabo/plusplusbot/compare/v1.1.1...v1.1.2) - 2025-05-20
+- Fix: inputs name by @buty4649 in https://github.com/pepabo/plusplusbot/pull/14
+
 ## [v1.1.1](https://github.com/pepabo/plusplusbot/compare/v1.1.0...v1.1.1) - 2025-05-20
 - Fix: change secrets to inputs in release action by @buty4649 in https://github.com/pepabo/plusplusbot/pull/10
 - Add version file by @buty4649 in https://github.com/pepabo/plusplusbot/pull/12
