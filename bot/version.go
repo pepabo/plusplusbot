@@ -1,3 +1,3 @@
 package bot
 
-var Version = "1.1.2"
+var Version = "1.1.3"
