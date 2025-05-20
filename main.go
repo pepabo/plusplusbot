@@ -41,7 +41,7 @@ func main() {
 
 	// Initialize bot
 	verbose := os.Getenv("DEBUG") != ""
-	bot, err := bot.New(botToken, appToken, repo, verbose, logger)
+	bot, err := bot.New(botToken, appToken, repo, verbose, logger, version)
 	if err != nil {
 		logger.Error("Failed to create bot", "error", err)
 		os.Exit(1)
