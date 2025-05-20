@@ -45,4 +45,4 @@
 [tagpr]
 	vPrefix = true
 	releaseBranch = main
-	versionFile = version.go
+	versionFile = bot/version.go
