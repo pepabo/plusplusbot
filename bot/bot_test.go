@@ -33,7 +33,7 @@ func setupTestBot(t *testing.T) (*Bot, func()) {
 	}
 
 	// Create a test bot with dummy tokens
-	bot, err := New("dummy-bot-token", "dummy-app-token", repo, false, logger)
+	bot, err := New("dummy-bot-token", "dummy-app-token", repo, false, logger, "dummy-version")
 	if err != nil {
 		if err := os.Remove(tempFile.Name()); err != nil {
 			t.Logf("Failed to remove temp file: %v", err)
@@ -103,7 +103,7 @@ func TestNew(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			bot, err := New(tt.botToken, tt.appToken, repo, tt.verbose, logger)
+			bot, err := New(tt.botToken, tt.appToken, repo, tt.verbose, logger, "dummy-version")
 			if (err != nil) != tt.wantErr {
 				t.Errorf("New() error = %v, wantErr %v", err, tt.wantErr)
 			}
