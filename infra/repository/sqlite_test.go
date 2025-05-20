@@ -1,13 +1,14 @@
-package bot
+package repository
 
 import (
+	"context"
 	"os"
 	"testing"
 
 	"log/slog"
 )
 
-func setupTestDB(t *testing.T) (*SQLiteDB, func()) {
+func setupTestSQLiteRepository(t *testing.T) (*SQLiteRepository, func()) {
 	// Create a temporary file for the test database
 	tempFile, err := os.CreateTemp("", "plusplusbot-test-*.db")
 	if err != nil {
@@ -22,17 +23,17 @@ func setupTestDB(t *testing.T) (*SQLiteDB, func()) {
 		Level: slog.LevelError,
 	}))
 
-	db, err := DatabaseNew(tempFile.Name(), logger)
+	repo, err := NewSQLiteRepository(tempFile.Name(), logger)
 	if err != nil {
 		if err := os.Remove(tempFile.Name()); err != nil {
 			t.Logf("Failed to remove temp file: %v", err)
 		}
-		t.Fatalf("Failed to create test database: %v", err)
+		t.Fatalf("Failed to create test repository: %v", err)
 	}
 
 	// Return cleanup function
 	cleanup := func() {
-		if err := db.db.Close(); err != nil {
+		if err := repo.Close(); err != nil {
 			t.Logf("Failed to close database: %v", err)
 		}
 		if err := os.Remove(tempFile.Name()); err != nil {
@@ -40,12 +41,14 @@ func setupTestDB(t *testing.T) (*SQLiteDB, func()) {
 		}
 	}
 
-	return db, cleanup
+	return repo, cleanup
 }
 
-func TestAddPoints(t *testing.T) {
-	db, cleanup := setupTestDB(t)
+func TestSQLiteAddPoints(t *testing.T) {
+	repo, cleanup := setupTestSQLiteRepository(t)
 	defer cleanup()
+
+	ctx := context.Background()
 
 	tests := []struct {
 		name    string
@@ -79,13 +82,13 @@ func TestAddPoints(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			err := db.AddPoints(tt.userID, tt.points, tt.isUser)
+			err := repo.AddPoints(ctx, tt.userID, tt.points, tt.isUser)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("AddPoints() error = %v, wantErr %v", err, tt.wantErr)
 			}
 
 			// Verify points were added correctly
-			got, err := db.GetPoints(tt.userID)
+			got, err := repo.GetPoints(ctx, tt.userID)
 			if err != nil {
 				t.Errorf("GetPoints() error = %v", err)
 			}
@@ -105,12 +108,14 @@ func TestAddPoints(t *testing.T) {
 	}
 }
 
-func TestGetPoints(t *testing.T) {
-	db, cleanup := setupTestDB(t)
+func TestSQLiteGetPoints(t *testing.T) {
+	repo, cleanup := setupTestSQLiteRepository(t)
 	defer cleanup()
 
+	ctx := context.Background()
+
 	// Test getting points for non-existent user
-	points, err := db.GetPoints("nonexistent")
+	points, err := repo.GetPoints(ctx, "nonexistent")
 	if err != nil {
 		t.Errorf("GetPoints() error = %v", err)
 	}
@@ -119,12 +124,12 @@ func TestGetPoints(t *testing.T) {
 	}
 
 	// Add points to a user and verify
-	err = db.AddPoints("user1", 20, true)
+	err = repo.AddPoints(ctx, "user1", 20, true)
 	if err != nil {
 		t.Errorf("AddPoints() error = %v", err)
 	}
 
-	points, err = db.GetPoints("user1")
+	points, err = repo.GetPoints(ctx, "user1")
 	if err != nil {
 		t.Errorf("GetPoints() error = %v", err)
 	}

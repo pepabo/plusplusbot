@@ -24,5 +24,17 @@ jobs:
       - name: Install dependencies
         run: go mod download
 
-      - name: Run tests
+      - name: Test for sqlite
         run: go test -v ./...
+
+      - name: Test for dynamodb
+        run: go test -v ./...
+        env:
+          DB_DRIVER: dynamodb
+          DYNAMO_LOCAL: 1
+          DYNAMO_TABLE_NAME_PREFIX: test
+    services:
+      dynamodb:
+        image: amazon/dynamodb-local:latest
+        ports:
+          - 8000:8000
