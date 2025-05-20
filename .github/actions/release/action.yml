@@ -1,7 +1,7 @@
 name: 'Release Action'
 description: 'Reusable workflow for releasing with GoReleaser'
 
-secrets:
+inputs:
   github_token:
     description: 'GitHub token for authentication'
     required: true
@@ -22,4 +22,4 @@ runs:
         version: latest
         args: release --clean
       env:
-        GITHUB_TOKEN: ${{ secrets.github_token }}
+        GITHUB_TOKEN: ${{ inputs.github_token }}
