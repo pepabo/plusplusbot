@@ -30,11 +30,10 @@ type Bot struct {
 	verbose      bool
 	logger       *slog.Logger
 	repo         repository.UserPointsRepository
-	version      string
 }
 
 // New creates a new Slack bot instance
-func New(botToken, appToken string, repo repository.UserPointsRepository, verbose bool, logger *slog.Logger, version string) (*Bot, error) {
+func New(botToken, appToken string, repo repository.UserPointsRepository, verbose bool, logger *slog.Logger) (*Bot, error) {
 	if botToken == "" || appToken == "" {
 		return nil, fmt.Errorf("SLACK_BOT_TOKEN or SLACK_APP_TOKEN is not set")
 	}
@@ -60,13 +59,12 @@ func New(botToken, appToken string, repo repository.UserPointsRepository, verbos
 		verbose:      verbose,
 		logger:       logger,
 		repo:         repo,
-		version:      version,
 	}, nil
 }
 
 // Start starts the Slack bot
 func (b *Bot) Start() {
-	b.logger.Debug("Starting bot(version: " + b.version + ")...")
+	b.logger.Debug("Starting bot(version: " + Version + ")...")
 	go b.handleEvents()
 	b.logger.Debug("Starting socket mode client...")
 	if err := b.socketClient.Run(); err != nil {
