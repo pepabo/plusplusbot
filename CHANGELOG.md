@@ -1,5 +1,8 @@
 # Changelog
 
+## [v1.1.3](https://github.com/pepabo/plusplusbot/compare/v1.1.2...v1.1.3) - 2025-05-20
+- refactor: move version management to bot package by @buty4649 in https://github.com/pepabo/plusplusbot/pull/16
+
 ## [v1.1.2](https://github.com/pepabo/plusplusbot/compare/v1.1.1...v1.1.2) - 2025-05-20
 - Fix: inputs name by @buty4649 in https://github.com/pepabo/plusplusbot/pull/14
 
