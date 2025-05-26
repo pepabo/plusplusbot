@@ -9,7 +9,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/dynamodb v1.43.1
 	github.com/guregu/dynamo/v2 v2.3.0
 	github.com/ncruces/go-sqlite3 v0.25.2
-	github.com/slack-go/slack v0.16.0
+	github.com/slack-go/slack v0.17.0
 )
 
 require (
@@ -27,9 +27,8 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/sts v1.33.19 // indirect
 	github.com/aws/smithy-go v1.22.2 // indirect
 	github.com/cenkalti/backoff/v4 v4.3.0 // indirect
-	github.com/gorilla/websocket v1.4.2 // indirect
+	github.com/gorilla/websocket v1.5.3 // indirect
 	github.com/ncruces/julianday v1.0.0 // indirect
-	github.com/stretchr/testify v1.8.4 // indirect
 	github.com/tetratelabs/wazero v1.9.0 // indirect
 	golang.org/x/sync v0.14.0 // indirect
 	golang.org/x/sys v0.33.0 // indirect
