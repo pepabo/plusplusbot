@@ -1,5 +1,8 @@
 # Changelog
 
+## [v1.1.4](https://github.com/pepabo/plusplusbot/compare/v1.1.3...v1.1.4) - 2025-05-27
+- deps(deps): bump github.com/slack-go/slack from 0.16.0 to 0.17.0 by @dependabot in https://github.com/pepabo/plusplusbot/pull/18
+
 ## [v1.1.3](https://github.com/pepabo/plusplusbot/compare/v1.1.2...v1.1.3) - 2025-05-20
 - refactor: move version management to bot package by @buty4649 in https://github.com/pepabo/plusplusbot/pull/16
 
