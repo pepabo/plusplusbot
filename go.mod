@@ -9,7 +9,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/dynamodb v1.43.2
 	github.com/guregu/dynamo/v2 v2.3.0
 	github.com/ncruces/go-sqlite3 v0.26.1
-	github.com/slack-go/slack v0.17.0
+	github.com/slack-go/slack v0.17.1
 )
 
 require (
