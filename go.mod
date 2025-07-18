@@ -8,7 +8,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/credentials v1.17.70
 	github.com/aws/aws-sdk-go-v2/service/dynamodb v1.44.0
 	github.com/guregu/dynamo/v2 v2.3.0
-	github.com/ncruces/go-sqlite3 v0.27.0
+	github.com/ncruces/go-sqlite3 v0.27.1
 	github.com/slack-go/slack v0.17.3
 )
 
