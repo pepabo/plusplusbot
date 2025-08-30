@@ -9,43 +9,72 @@ func TestGetFormattedMessage(t *testing.T) {
 	tests := []struct {
 		name         string
 		messageType  MessageType
-		userID       string
+		target       string
 		points       int
+		isUser       bool
 		wantContains []string
 	}{
 		{
-			name:         "PlusPointsMessage",
+			name:         "PlusPointsMessage for user",
 			messageType:  PlusPointsMessage,
-			userID:       "U123456",
+			target:       "U123456",
 			points:       5,
+			isUser:       true,
 			wantContains: []string{"<@U123456>", "5 points"},
 		},
 		{
-			name:         "MinusPointsMessage",
+			name:         "PlusPointsMessage for emoji",
+			messageType:  PlusPointsMessage,
+			target:       "sake",
+			points:       5,
+			isUser:       false,
+			wantContains: []string{":sake:", "5 points"},
+		},
+		{
+			name:         "MinusPointsMessage for user",
 			messageType:  MinusPointsMessage,
-			userID:       "U789012",
+			target:       "U789012",
 			points:       -3,
+			isUser:       true,
 			wantContains: []string{"<@U789012>", "-3 points"},
 		},
 		{
-			name:         "EqualsMessage",
+			name:         "MinusPointsMessage for emoji",
+			messageType:  MinusPointsMessage,
+			target:       "beer",
+			points:       -3,
+			isUser:       false,
+			wantContains: []string{":beer:", "-3 points"},
+		},
+		{
+			name:         "EqualsMessage for user",
 			messageType:  EqualsMessage,
-			userID:       "U345678",
+			target:       "U345678",
 			points:       0,
+			isUser:       true,
 			wantContains: []string{"<@U345678>", "0 points"},
+		},
+		{
+			name:         "EqualsMessage for emoji",
+			messageType:  EqualsMessage,
+			target:       "coffee",
+			points:       0,
+			isUser:       false,
+			wantContains: []string{":coffee:", "0 points"},
 		},
 		{
 			name:         "SelfMessage",
 			messageType:  SelfMessage,
-			userID:       "U901234",
+			target:       "U901234",
 			points:       0,
+			isUser:       true,
 			wantContains: []string{"<@U901234>"},
 		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got := getFormattedMessage(tt.messageType, tt.userID, tt.points)
+			got := getFormattedMessage(tt.messageType, tt.target, tt.points, tt.isUser)
 
 			// For PlusPointsMessage and MinusPointsMessage, check if there's a reaction
 			if tt.messageType == PlusPointsMessage || tt.messageType == MinusPointsMessage {

@@ -83,34 +83,59 @@ const (
 
 // detectPointOperation checks if the message contains a point operation (++, --, ==)
 func (b *Bot) detectPointOperation(text string) PointOperation {
-	plusPattern := `.*<@[A-Z0-9]+>[ 　]*\+\+.*`
-	minusPattern := `.*<@[A-Z0-9]+>[ 　]*\-\-.*`
-	equalsPattern := `.*<@[A-Z0-9]+>[ 　]*\=\=.*`
+	// Support both user mentions and emoji patterns
+	// User mention patterns: <@U123456>++
+	userPlusPattern := `.*<@[A-Z0-9]+>[ 　]*\+\+.*`
+	userMinusPattern := `.*<@[A-Z0-9]+>[ 　]*\-\-.*`
+	userEqualsPattern := `.*<@[A-Z0-9]+>[ 　]*\=\=.*`
+	
+	// Emoji patterns: :emoji: ++
+	emojiPlusPattern := `.*:[a-zA-Z0-9_+-]+:[ 　]*\+\+.*`
+	emojiMinusPattern := `.*:[a-zA-Z0-9_+-]+:[ 　]*\-\-.*`
+	emojiEqualsPattern := `.*:[a-zA-Z0-9_+-]+:[ 　]*\=\=.*`
 
-	plusMatched, err := regexp.MatchString(plusPattern, text)
+	// Check for plus patterns
+	userPlusMatched, err := regexp.MatchString(userPlusPattern, text)
 	if err != nil {
-		b.logger.Error("Error matching plus pattern", "error", err)
+		b.logger.Error("Error matching user plus pattern", "error", err)
 		return NoOperation
 	}
-	if plusMatched {
+	emojiPlusMatched, err := regexp.MatchString(emojiPlusPattern, text)
+	if err != nil {
+		b.logger.Error("Error matching emoji plus pattern", "error", err)
+		return NoOperation
+	}
+	if userPlusMatched || emojiPlusMatched {
 		return PointUp
 	}
 
-	minusMatched, err := regexp.MatchString(minusPattern, text)
+	// Check for minus patterns
+	userMinusMatched, err := regexp.MatchString(userMinusPattern, text)
 	if err != nil {
-		b.logger.Error("Error matching minus pattern", "error", err)
+		b.logger.Error("Error matching user minus pattern", "error", err)
 		return NoOperation
 	}
-	if minusMatched {
+	emojiMinusMatched, err := regexp.MatchString(emojiMinusPattern, text)
+	if err != nil {
+		b.logger.Error("Error matching emoji minus pattern", "error", err)
+		return NoOperation
+	}
+	if userMinusMatched || emojiMinusMatched {
 		return PointDown
 	}
 
-	equalsMatched, err := regexp.MatchString(equalsPattern, text)
+	// Check for equals patterns
+	userEqualsMatched, err := regexp.MatchString(userEqualsPattern, text)
 	if err != nil {
-		b.logger.Error("Error matching equals pattern", "error", err)
+		b.logger.Error("Error matching user equals pattern", "error", err)
 		return NoOperation
 	}
-	if equalsMatched {
+	emojiEqualsMatched, err := regexp.MatchString(emojiEqualsPattern, text)
+	if err != nil {
+		b.logger.Error("Error matching emoji equals pattern", "error", err)
+		return NoOperation
+	}
+	if userEqualsMatched || emojiEqualsMatched {
 		return PointCheck
 	}
 
@@ -126,6 +151,33 @@ func extractUserID(text string) string {
 	return matches[1]
 }
 
+// extractEmojiName extracts emoji name from text (e.g., ":sake:" -> "sake")
+func extractEmojiName(text string) string {
+	re := regexp.MustCompile(`:([a-zA-Z0-9_+-]+):`)
+	matches := re.FindStringSubmatch(text)
+	if len(matches) < 2 {
+		return ""
+	}
+	return matches[1]
+}
+
+// extractTargetFromText extracts either user ID or emoji name from text
+func extractTargetFromText(text string) (string, bool) {
+	// Try to extract user ID first
+	userID := extractUserID(text)
+	if userID != "" {
+		return userID, true // true indicates it's a user ID
+	}
+	
+	// If no user ID, try to extract emoji name
+	emojiName := extractEmojiName(text)
+	if emojiName != "" {
+		return emojiName, false // false indicates it's an emoji name
+	}
+	
+	return "", false
+}
+
 // isUser checks if the given user ID belongs to a user
 func (b *Bot) isUser(userID string) (bool, error) {
 	user, err := b.api.GetUserInfo(userID)
@@ -138,16 +190,16 @@ func (b *Bot) isUser(userID string) (bool, error) {
 
 // handlePointChangeMessage processes a point up or down message
 func (b *Bot) handlePointChangeMessage(ev *slackevents.MessageEvent, operation PointOperation) {
-	// Extract user ID from the message
-	userID := extractUserID(ev.Text)
-	if userID == "" {
-		b.logger.Error("No user ID found in message")
+	// Extract target (user ID or emoji name) from the message
+	target, isUser := extractTargetFromText(ev.Text)
+	if target == "" {
+		b.logger.Error("No target found in message")
 		return
 	}
 
-	// Check if user is trying to point themselves
-	if userID == ev.User {
-		message := getFormattedMessage(SelfMessage, userID, 0)
+	// Check if user is trying to point themselves (only applies to user targets)
+	if isUser && target == ev.User {
+		message := getFormattedMessage(SelfMessage, target, 0, true)
 		_, _, err := b.api.PostMessage(ev.Channel, slack.MsgOptionText(message, false), slack.MsgOptionTS(ev.ThreadTimeStamp))
 		if err != nil {
 			b.logger.Error("Error sending message", "error", err)
@@ -155,10 +207,18 @@ func (b *Bot) handlePointChangeMessage(ev *slackevents.MessageEvent, operation P
 		return
 	}
 
-	is_user, err := b.isUser(userID)
-	if err != nil {
-		b.logger.Error("Error checking if user is bot", "error", err)
-		return
+	// For user targets, check if they are bots
+	is_user_target := false
+	if isUser {
+		var err error
+		is_user_target, err = b.isUser(target)
+		if err != nil {
+			b.logger.Error("Error checking if user is bot", "error", err)
+			return
+		}
+	} else {
+		// For emoji targets, treat as non-user (similar to bot behavior)
+		is_user_target = false
 	}
 
 	pointsChange := 1
@@ -166,15 +226,15 @@ func (b *Bot) handlePointChangeMessage(ev *slackevents.MessageEvent, operation P
 		pointsChange = -1
 	}
 
-	// Add points to the user
+	// Add points to the target
 	ctx := context.Background()
-	if err := b.repo.AddPoints(ctx, userID, pointsChange, is_user); err != nil {
+	if err := b.repo.AddPoints(ctx, target, pointsChange, is_user_target); err != nil {
 		b.logger.Error("Error adding points", "error", err)
 		return
 	}
 
 	// Get current points
-	points, err := b.repo.GetPoints(ctx, userID)
+	points, err := b.repo.GetPoints(ctx, target)
 	if err != nil {
 		b.logger.Error("Error getting points", "error", err)
 		return
@@ -184,9 +244,9 @@ func (b *Bot) handlePointChangeMessage(ev *slackevents.MessageEvent, operation P
 	var message string
 	switch operation {
 	case PointDown:
-		message = getFormattedMessage(MinusPointsMessage, userID, points)
+		message = getFormattedMessage(MinusPointsMessage, target, points, isUser)
 	case PointUp:
-		message = getFormattedMessage(PlusPointsMessage, userID, points)
+		message = getFormattedMessage(PlusPointsMessage, target, points, isUser)
 	}
 
 	_, _, err = b.api.PostMessage(ev.Channel, slack.MsgOptionText(message, false), slack.MsgOptionTS(ev.ThreadTimeStamp))
@@ -199,20 +259,22 @@ func (b *Bot) handlePointChangeMessage(ev *slackevents.MessageEvent, operation P
 }
 
 func (b *Bot) handlePointCheckMessage(ev *slackevents.MessageEvent) {
-	userID := extractUserID(ev.Text)
-	if userID == "" {
-		b.logger.Error("No user ID found in message")
+	// Extract target (user ID or emoji name) from the message
+	target, isUser := extractTargetFromText(ev.Text)
+	if target == "" {
+		b.logger.Error("No target found in message")
 		return
 	}
 
 	ctx := context.Background()
-	points, err := b.repo.GetPoints(ctx, userID)
+	points, err := b.repo.GetPoints(ctx, target)
 	if err != nil {
 		b.logger.Error("Error getting points", "error", err)
 		return
 	}
 
-	message := getFormattedMessage(EqualsMessage, userID, points)
+	message := getFormattedMessage(EqualsMessage, target, points, isUser)
+
 	_, _, err = b.api.PostMessage(ev.Channel, slack.MsgOptionText(message, false), slack.MsgOptionTS(ev.ThreadTimeStamp))
 	if err != nil {
 		b.logger.Error("Error sending message", "error", err)
@@ -221,6 +283,7 @@ func (b *Bot) handlePointCheckMessage(ev *slackevents.MessageEvent) {
 
 // handleMessageEvent processes a message event
 func (b *Bot) handleMessageEvent(ev *slackevents.MessageEvent) {
+	b.logger.Debug("Received message event", "event", ev)
 	operation := b.detectPointOperation(ev.Text)
 	if operation != NoOperation {
 		b.logger.Info("Point operation detected", "text", ev.Text)
