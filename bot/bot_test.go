@@ -139,6 +139,36 @@ func TestDetectPointOperation(t *testing.T) {
 			want: PointCheck,
 		},
 		{
+			name: "Emoji point up",
+			text: ":sake: ++",
+			want: PointUp,
+		},
+		{
+			name: "Emoji point down",
+			text: ":sake: --",
+			want: PointDown,
+		},
+		{
+			name: "Emoji point check",
+			text: ":sake: ==",
+			want: PointCheck,
+		},
+		{
+			name: "Emoji with underscores",
+			text: ":beer_mug: ++",
+			want: PointUp,
+		},
+		{
+			name: "Emoji with numbers",
+			text: ":beer2: ++",
+			want: PointUp,
+		},
+		{
+			name: "Emoji with spaces",
+			text: ":sake:   ++",
+			want: PointUp,
+		},
+		{
 			name: "No operation",
 			text: "Hello world",
 			want: NoOperation,
@@ -151,6 +181,11 @@ func TestDetectPointOperation(t *testing.T) {
 		{
 			name: "Invalid format with newline",
 			text: "<@U123456>\n++",
+			want: NoOperation,
+		},
+		{
+			name: "Invalid emoji format",
+			text: ":sake +",
 			want: NoOperation,
 		},
 	}
@@ -193,6 +228,95 @@ func TestExtractUserID(t *testing.T) {
 			got := extractUserID(tt.text)
 			if got != tt.want {
 				t.Errorf("extractUserID() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestExtractEmojiName(t *testing.T) {
+	tests := []struct {
+		name string
+		text string
+		want string
+	}{
+		{
+			name: "Valid emoji",
+			text: ":sake: ++",
+			want: "sake",
+		},
+		{
+			name: "Emoji with underscores",
+			text: ":beer_mug: ++",
+			want: "beer_mug",
+		},
+		{
+			name: "Emoji with numbers",
+			text: ":beer2: ++",
+			want: "beer2",
+		},
+		{
+			name: "No emoji",
+			text: "Hello world",
+			want: "",
+		},
+		{
+			name: "Invalid emoji format",
+			text: ":sake ++",
+			want: "",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := extractEmojiName(tt.text)
+			if got != tt.want {
+				t.Errorf("extractEmojiName() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestExtractTargetFromText(t *testing.T) {
+	tests := []struct {
+		name         string
+		text         string
+		wantTarget   string
+		wantIsUser   bool
+	}{
+		{
+			name:         "User mention",
+			text:         "<@U123456>++",
+			wantTarget:   "U123456",
+			wantIsUser:   true,
+		},
+		{
+			name:         "Emoji",
+			text:         ":sake: ++",
+			wantTarget:   "sake",
+			wantIsUser:   false,
+		},
+		{
+			name:         "No target",
+			text:         "Hello world",
+			wantTarget:   "",
+			wantIsUser:   false,
+		},
+		{
+			name:         "User mention has priority",
+			text:         "<@U123456> :sake: ++",
+			wantTarget:   "U123456",
+			wantIsUser:   true,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			gotTarget, gotIsUser := extractTargetFromText(tt.text)
+			if gotTarget != tt.wantTarget {
+				t.Errorf("extractTargetFromText() gotTarget = %v, want %v", gotTarget, tt.wantTarget)
+			}
+			if gotIsUser != tt.wantIsUser {
+				t.Errorf("extractTargetFromText() gotIsUser = %v, want %v", gotIsUser, tt.wantIsUser)
 			}
 		})
 	}
