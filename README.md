@@ -26,6 +26,11 @@ The following settings are required to run this bot:
   - `channels:history` (to read channel message history)
   - `chat:write` (to send messages)
   - `user:read` (to read user information)
+- Event Subscriptions
+  - Bot Events
+    - `message.channels` (to handle channel messages)
+
+See our example [slack-app-manifest.json](slack-app-manifest.json) for more details.
 
 ## Setup
 

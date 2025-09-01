@@ -24,3 +24,10 @@ go.work.sum
 
 # env file
 .env
+.envrc
+
+# database file
+plusplus.db
+
+# binary file
+plusplusbot
