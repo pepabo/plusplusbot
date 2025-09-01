@@ -47,7 +47,7 @@ func init() {
 	}
 }
 
-func getFormattedMessage(messageType MessageType, userID string, points int) string {
+func getFormattedMessage(messageType MessageType, target string, points int, isUser bool) string {
 	var reaction, template string
 	switch messageType {
 	case PlusPointsMessage:
@@ -65,9 +65,16 @@ func getFormattedMessage(messageType MessageType, userID string, points int) str
 	}
 
 	pointsStr := fmt.Sprintf("%d points", points)
-	username := fmt.Sprintf("<@%s>", userID)
+	
+	// Format target based on whether it's a user or emoji
+	var targetStr string
+	if isUser {
+		targetStr = fmt.Sprintf("<@%s>", target)
+	} else {
+		targetStr = fmt.Sprintf(":%s:", target)
+	}
 
-	message := strings.ReplaceAll(template, "{thing}", username)
+	message := strings.ReplaceAll(template, "{thing}", targetStr)
 	message = strings.ReplaceAll(message, "{points_string}", pointsStr)
 	if reaction != "" {
 		message = fmt.Sprintf("%s %s", reaction, message)
