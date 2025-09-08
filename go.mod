@@ -1,6 +1,6 @@
 module plusplusbot
 
-go 1.24
+go 1.24.0
 
 require (
 	github.com/aws/aws-sdk-go-v2 v1.38.3
@@ -8,7 +8,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/credentials v1.18.10
 	github.com/aws/aws-sdk-go-v2/service/dynamodb v1.50.1
 	github.com/guregu/dynamo/v2 v2.4.0
-	github.com/ncruces/go-sqlite3 v0.28.0
+	github.com/ncruces/go-sqlite3 v0.29.0
 	github.com/slack-go/slack v0.17.3
 )
 
@@ -30,6 +30,6 @@ require (
 	github.com/gorilla/websocket v1.5.3 // indirect
 	github.com/ncruces/julianday v1.0.0 // indirect
 	github.com/tetratelabs/wazero v1.9.0 // indirect
-	golang.org/x/sync v0.16.0 // indirect
-	golang.org/x/sys v0.35.0 // indirect
+	golang.org/x/sync v0.17.0 // indirect
+	golang.org/x/sys v0.36.0 // indirect
 )
