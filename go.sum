@@ -42,8 +42,8 @@ github.com/gorilla/websocket v1.5.3 h1:saDtZ6Pbx/0u+bgYQ3q96pZgCzfhKXGPqt7kZ72aN
 github.com/gorilla/websocket v1.5.3/go.mod h1:YR8l580nyteQvAITg2hZ9XVh4b55+EU/adAjf1fMHhE=
 github.com/guregu/dynamo/v2 v2.4.0 h1:H++ar4AjLvqjnJblqXsQVcrAqfgV+13nMQDXjSyrIuU=
 github.com/guregu/dynamo/v2 v2.4.0/go.mod h1:+BaVISj7O2NFnLFlyX4dwavvTTBBwy/xhLDyYe3PL9A=
-github.com/ncruces/go-sqlite3 v0.29.0 h1:1tsLiagCoqZEfcHDeKsNSv5jvrY/Iu393pAnw2wLNJU=
-github.com/ncruces/go-sqlite3 v0.29.0/go.mod h1:r1hSvYKPNJ+OlUA1O3r8o9LAawzPAlqeZiIdxTBBBJ0=
+github.com/ncruces/go-sqlite3 v0.29.1 h1:NIi8AISWBToRHyoz01FXiTNvU147Tqdibgj2tFzJCqM=
+github.com/ncruces/go-sqlite3 v0.29.1/go.mod h1:PpccBNNhvjwUOwDQEn2gXQPFPTWdlromj0+fSkd5KSg=
 github.com/ncruces/julianday v1.0.0 h1:fH0OKwa7NWvniGQtxdJRxAgkBMolni2BjDHaWTxqt7M=
 github.com/ncruces/julianday v1.0.0/go.mod h1:Dusn2KvZrrovOMJuOt0TNXL6tB7U2E8kvza5fFc9G7g=
 github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=
