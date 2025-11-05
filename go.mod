@@ -8,7 +8,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/credentials v1.18.21
 	github.com/aws/aws-sdk-go-v2/service/dynamodb v1.52.4
 	github.com/guregu/dynamo/v2 v2.4.0
-	github.com/ncruces/go-sqlite3 v0.29.1
+	github.com/ncruces/go-sqlite3 v0.30.0
 	github.com/slack-go/slack v0.17.3
 )
 
@@ -31,5 +31,5 @@ require (
 	github.com/ncruces/julianday v1.0.0 // indirect
 	github.com/tetratelabs/wazero v1.9.0 // indirect
 	golang.org/x/sync v0.17.0 // indirect
-	golang.org/x/sys v0.36.0 // indirect
+	golang.org/x/sys v0.37.0 // indirect
 )
