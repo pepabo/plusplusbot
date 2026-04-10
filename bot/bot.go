@@ -242,7 +242,10 @@ func (b *Bot) handleEvents() {
 				continue
 			}
 
-			b.socketClient.Ack(*evt.Request)
+			if err := b.socketClient.Ack(*evt.Request); err != nil {
+				b.logger.Error("Failed to acknowledge event", "error", err)
+				continue
+			}
 
 			switch eventsAPIEvent.Type {
 			case slackevents.CallbackEvent:
