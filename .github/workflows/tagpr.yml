@@ -25,10 +25,5 @@ jobs:
         with:
           token: ${{ steps.generate_token.outputs.token }}
       - uses: Songmu/tagpr@v1
-        id: tagpr
         env:
           GITHUB_TOKEN: ${{ steps.generate_token.outputs.token }}
-      - uses: ./.github/actions/release
-        if: steps.tagpr.outputs.tag != ''
-        with:
-          github_token: ${{ steps.generate_token.outputs.token }}
