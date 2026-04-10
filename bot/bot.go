@@ -81,101 +81,45 @@ const (
 	PointCheck
 )
 
+// Pre-compiled regexes for detecting point operations with targets
+var (
+	// User mention pattern: <@U123456> ++ (captures user ID and operator)
+	userOperationPattern = regexp.MustCompile(`<@([A-Z0-9]+)>[ 　]*(\+\+|-{2}|={2})`)
+	// Emoji pattern: :emoji: ++ (captures emoji name and operator)
+	emojiOperationPattern = regexp.MustCompile(`:([a-zA-Z0-9_+-]+):[ 　]*(\+\+|-{2}|={2})`)
+)
+
+// parseOperator converts an operator string to a PointOperation
+func parseOperator(op string) PointOperation {
+	switch op {
+	case "++":
+		return PointUp
+	case "--":
+		return PointDown
+	case "==":
+		return PointCheck
+	default:
+		return NoOperation
+	}
+}
+
+// detectOperationAndTarget detects the point operation and extracts the target in one step.
+// This ensures the detected operation is associated with the correct target.
+func detectOperationAndTarget(text string) (PointOperation, string, bool) {
+	// User mentions have priority
+	if matches := userOperationPattern.FindStringSubmatch(text); len(matches) >= 3 {
+		return parseOperator(matches[2]), matches[1], true
+	}
+	if matches := emojiOperationPattern.FindStringSubmatch(text); len(matches) >= 3 {
+		return parseOperator(matches[2]), matches[1], false
+	}
+	return NoOperation, "", false
+}
+
 // detectPointOperation checks if the message contains a point operation (++, --, ==)
 func (b *Bot) detectPointOperation(text string) PointOperation {
-	// Support both user mentions and emoji patterns
-	// User mention patterns: <@U123456>++
-	userPlusPattern := `.*<@[A-Z0-9]+>[ 　]*\+\+.*`
-	userMinusPattern := `.*<@[A-Z0-9]+>[ 　]*\-\-.*`
-	userEqualsPattern := `.*<@[A-Z0-9]+>[ 　]*\=\=.*`
-	
-	// Emoji patterns: :emoji: ++
-	emojiPlusPattern := `.*:[a-zA-Z0-9_+-]+:[ 　]*\+\+.*`
-	emojiMinusPattern := `.*:[a-zA-Z0-9_+-]+:[ 　]*\-\-.*`
-	emojiEqualsPattern := `.*:[a-zA-Z0-9_+-]+:[ 　]*\=\=.*`
-
-	// Check for plus patterns
-	userPlusMatched, err := regexp.MatchString(userPlusPattern, text)
-	if err != nil {
-		b.logger.Error("Error matching user plus pattern", "error", err)
-		return NoOperation
-	}
-	emojiPlusMatched, err := regexp.MatchString(emojiPlusPattern, text)
-	if err != nil {
-		b.logger.Error("Error matching emoji plus pattern", "error", err)
-		return NoOperation
-	}
-	if userPlusMatched || emojiPlusMatched {
-		return PointUp
-	}
-
-	// Check for minus patterns
-	userMinusMatched, err := regexp.MatchString(userMinusPattern, text)
-	if err != nil {
-		b.logger.Error("Error matching user minus pattern", "error", err)
-		return NoOperation
-	}
-	emojiMinusMatched, err := regexp.MatchString(emojiMinusPattern, text)
-	if err != nil {
-		b.logger.Error("Error matching emoji minus pattern", "error", err)
-		return NoOperation
-	}
-	if userMinusMatched || emojiMinusMatched {
-		return PointDown
-	}
-
-	// Check for equals patterns
-	userEqualsMatched, err := regexp.MatchString(userEqualsPattern, text)
-	if err != nil {
-		b.logger.Error("Error matching user equals pattern", "error", err)
-		return NoOperation
-	}
-	emojiEqualsMatched, err := regexp.MatchString(emojiEqualsPattern, text)
-	if err != nil {
-		b.logger.Error("Error matching emoji equals pattern", "error", err)
-		return NoOperation
-	}
-	if userEqualsMatched || emojiEqualsMatched {
-		return PointCheck
-	}
-
-	return NoOperation
-}
-
-func extractUserID(text string) string {
-	re := regexp.MustCompile(`<@([A-Z0-9]+)>`)
-	matches := re.FindStringSubmatch(text)
-	if len(matches) < 2 {
-		return ""
-	}
-	return matches[1]
-}
-
-// extractEmojiName extracts emoji name from text (e.g., ":sake:" -> "sake")
-func extractEmojiName(text string) string {
-	re := regexp.MustCompile(`:([a-zA-Z0-9_+-]+):`)
-	matches := re.FindStringSubmatch(text)
-	if len(matches) < 2 {
-		return ""
-	}
-	return matches[1]
-}
-
-// extractTargetFromText extracts either user ID or emoji name from text
-func extractTargetFromText(text string) (string, bool) {
-	// Try to extract user ID first
-	userID := extractUserID(text)
-	if userID != "" {
-		return userID, true // true indicates it's a user ID
-	}
-	
-	// If no user ID, try to extract emoji name
-	emojiName := extractEmojiName(text)
-	if emojiName != "" {
-		return emojiName, false // false indicates it's an emoji name
-	}
-	
-	return "", false
+	op, _, _ := detectOperationAndTarget(text)
+	return op
 }
 
 // isUser checks if the given user ID belongs to a user
@@ -189,13 +133,7 @@ func (b *Bot) isUser(userID string) (bool, error) {
 }
 
 // handlePointChangeMessage processes a point up or down message
-func (b *Bot) handlePointChangeMessage(ev *slackevents.MessageEvent, operation PointOperation) {
-	// Extract target (user ID or emoji name) from the message
-	target, isUser := extractTargetFromText(ev.Text)
-	if target == "" {
-		b.logger.Error("No target found in message")
-		return
-	}
+func (b *Bot) handlePointChangeMessage(ev *slackevents.MessageEvent, operation PointOperation, target string, isUser bool) {
 
 	// Check if user is trying to point themselves (only applies to user targets)
 	if isUser && target == ev.User {
@@ -258,14 +196,7 @@ func (b *Bot) handlePointChangeMessage(ev *slackevents.MessageEvent, operation P
 	b.logger.Debug("Reply sent", "message", message)
 }
 
-func (b *Bot) handlePointCheckMessage(ev *slackevents.MessageEvent) {
-	// Extract target (user ID or emoji name) from the message
-	target, isUser := extractTargetFromText(ev.Text)
-	if target == "" {
-		b.logger.Error("No target found in message")
-		return
-	}
-
+func (b *Bot) handlePointCheckMessage(ev *slackevents.MessageEvent, target string, isUser bool) {
 	ctx := context.Background()
 	points, err := b.repo.GetPoints(ctx, target)
 	if err != nil {
@@ -284,13 +215,13 @@ func (b *Bot) handlePointCheckMessage(ev *slackevents.MessageEvent) {
 // handleMessageEvent processes a message event
 func (b *Bot) handleMessageEvent(ev *slackevents.MessageEvent) {
 	b.logger.Debug("Received message event", "event", ev)
-	operation := b.detectPointOperation(ev.Text)
-	if operation != NoOperation {
-		b.logger.Info("Point operation detected", "text", ev.Text)
+	operation, target, isUser := detectOperationAndTarget(ev.Text)
+	if operation != NoOperation && target != "" {
+		b.logger.Info("Point operation detected", "text", ev.Text, "target", target, "isUser", isUser)
 		if operation == PointCheck {
-			b.handlePointCheckMessage(ev)
+			b.handlePointCheckMessage(ev, target, isUser)
 		} else {
-			b.handlePointChangeMessage(ev, operation)
+			b.handlePointChangeMessage(ev, operation, target, isUser)
 		}
 	}
 }
