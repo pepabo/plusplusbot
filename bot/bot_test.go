@@ -383,6 +383,70 @@ func TestDetectOperationAndTarget(t *testing.T) {
 			wantTarget: "U123456",
 			wantIsUser: true,
 		},
+		// Operator must be at end of line or followed by newline
+		{
+			name:       "Emoji operator followed by text",
+			text:       ":nya-nya: -- Settings",
+			wantOp:     NoOperation,
+			wantTarget: "",
+			wantIsUser: false,
+		},
+		{
+			name:       "Emoji operator followed by text (plus)",
+			text:       ":neko: ++ foo",
+			wantOp:     NoOperation,
+			wantTarget: "",
+			wantIsUser: false,
+		},
+		{
+			name:       "Emoji operator followed by text (equals)",
+			text:       ":neko: == foo",
+			wantOp:     NoOperation,
+			wantTarget: "",
+			wantIsUser: false,
+		},
+		{
+			name:       "Emoji operator followed by trailing spaces",
+			text:       ":neko: ++   ",
+			wantOp:     PointUp,
+			wantTarget: "neko",
+			wantIsUser: false,
+		},
+		{
+			name:       "Emoji operator followed by newline",
+			text:       ":neko: ++\n",
+			wantOp:     PointUp,
+			wantTarget: "neko",
+			wantIsUser: false,
+		},
+		{
+			name:       "Emoji operator followed by newline and text",
+			text:       ":neko: ++\nsome text",
+			wantOp:     PointUp,
+			wantTarget: "neko",
+			wantIsUser: false,
+		},
+		{
+			name:       "User operator followed by text",
+			text:       "<@U123456> ++ foo",
+			wantOp:     NoOperation,
+			wantTarget: "",
+			wantIsUser: false,
+		},
+		{
+			name:       "User operator followed by trailing spaces",
+			text:       "<@U123456> ++   ",
+			wantOp:     PointUp,
+			wantTarget: "U123456",
+			wantIsUser: true,
+		},
+		{
+			name:       "User operator followed by newline and text",
+			text:       "<@U123456> ++\nsome text",
+			wantOp:     PointUp,
+			wantTarget: "U123456",
+			wantIsUser: true,
+		},
 	}
 
 	for _, tt := range tests {
