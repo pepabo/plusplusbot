@@ -1,5 +1,9 @@
 # Changelog
 
+## [v1.1.6](https://github.com/pepabo/plusplusbot/compare/v1.1.5...v1.1.6) - 2026-04-10
+- fix: ++/--/== の後に文字列が続く場合は反応しないよう修正 by @Colorful12 in https://github.com/pepabo/plusplusbot/pull/117
+- fix: tagprからrelease実行を削除しタグpushトリガーに一本化 by @buty4649 in https://github.com/pepabo/plusplusbot/pull/116
+
 ## [v1.1.5](https://github.com/pepabo/plusplusbot/compare/v1.1.4...v1.1.5) - 2026-04-10
 - deps(deps): bump the aws-sdk-go-v2 group with 4 updates by @dependabot[bot] in https://github.com/pepabo/plusplusbot/pull/62
 - deps(deps): bump github.com/ncruces/go-sqlite3 from 0.28.0 to 0.29.0 by @dependabot[bot] in https://github.com/pepabo/plusplusbot/pull/63
