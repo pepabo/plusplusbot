@@ -1,5 +1,58 @@
 # Changelog
 
+## [v1.1.5](https://github.com/pepabo/plusplusbot/compare/v1.1.4...v1.1.5) - 2026-04-10
+- deps(deps): bump the aws-sdk-go-v2 group with 4 updates by @dependabot[bot] in https://github.com/pepabo/plusplusbot/pull/62
+- deps(deps): bump github.com/ncruces/go-sqlite3 from 0.28.0 to 0.29.0 by @dependabot[bot] in https://github.com/pepabo/plusplusbot/pull/63
+- deps(deps): bump the aws-sdk-go-v2 group with 3 updates by @dependabot[bot] in https://github.com/pepabo/plusplusbot/pull/64
+- deps(deps): bump the aws-sdk-go-v2 group with 2 updates by @dependabot[bot] in https://github.com/pepabo/plusplusbot/pull/65
+- deps(deps): bump the aws-sdk-go-v2 group with 4 updates by @dependabot[bot] in https://github.com/pepabo/plusplusbot/pull/66
+- deps(deps): bump the aws-sdk-go-v2 group with 4 updates by @dependabot[bot] in https://github.com/pepabo/plusplusbot/pull/67
+- deps(deps): bump the aws-sdk-go-v2 group with 2 updates by @dependabot[bot] in https://github.com/pepabo/plusplusbot/pull/68
+- deps(deps): bump github.com/ncruces/go-sqlite3 from 0.29.0 to 0.29.1 by @dependabot[bot] in https://github.com/pepabo/plusplusbot/pull/69
+- deps(deps): bump github.com/aws/aws-sdk-go-v2/service/dynamodb from 1.50.5 to 1.51.0 in the aws-sdk-go-v2 group by @dependabot[bot] in https://github.com/pepabo/plusplusbot/pull/70
+- deps(deps): bump the aws-sdk-go-v2 group with 4 updates by @dependabot[bot] in https://github.com/pepabo/plusplusbot/pull/71
+- deps(deps): bump github.com/aws/aws-sdk-go-v2/service/dynamodb from 1.51.1 to 1.52.0 in the aws-sdk-go-v2 group by @dependabot[bot] in https://github.com/pepabo/plusplusbot/pull/72
+- deps(deps): bump the aws-sdk-go-v2 group with 3 updates by @dependabot[bot] in https://github.com/pepabo/plusplusbot/pull/73
+- deps(deps): bump the aws-sdk-go-v2 group with 4 updates by @dependabot[bot] in https://github.com/pepabo/plusplusbot/pull/74
+- deps(deps): bump the aws-sdk-go-v2 group with 4 updates by @dependabot[bot] in https://github.com/pepabo/plusplusbot/pull/75
+- deps(deps): bump the aws-sdk-go-v2 group with 4 updates by @dependabot[bot] in https://github.com/pepabo/plusplusbot/pull/76
+- deps(deps): bump github.com/ncruces/go-sqlite3 from 0.29.1 to 0.30.0 by @dependabot[bot] in https://github.com/pepabo/plusplusbot/pull/77
+- deps(deps): bump the aws-sdk-go-v2 group with 2 updates by @dependabot[bot] in https://github.com/pepabo/plusplusbot/pull/78
+- deps(deps): bump github.com/ncruces/go-sqlite3 from 0.30.0 to 0.30.1 by @dependabot[bot] in https://github.com/pepabo/plusplusbot/pull/79
+- deps(deps): bump the aws-sdk-go-v2 group with 3 updates by @dependabot[bot] in https://github.com/pepabo/plusplusbot/pull/80
+- deps(deps): bump the aws-sdk-go-v2 group with 3 updates by @dependabot[bot] in https://github.com/pepabo/plusplusbot/pull/81
+- deps(deps): bump the aws-sdk-go-v2 group with 3 updates by @dependabot[bot] in https://github.com/pepabo/plusplusbot/pull/82
+- deps(deps): bump the aws-sdk-go-v2 group with 4 updates by @dependabot[bot] in https://github.com/pepabo/plusplusbot/pull/83
+- deps(deps): bump the aws-sdk-go-v2 group with 2 updates by @dependabot[bot] in https://github.com/pepabo/plusplusbot/pull/84
+- deps(deps): bump the aws-sdk-go-v2 group with 3 updates by @dependabot[bot] in https://github.com/pepabo/plusplusbot/pull/85
+- deps(deps): bump github.com/ncruces/go-sqlite3 from 0.30.1 to 0.30.2 by @dependabot[bot] in https://github.com/pepabo/plusplusbot/pull/86
+- deps(deps): bump the aws-sdk-go-v2 group with 4 updates by @dependabot[bot] in https://github.com/pepabo/plusplusbot/pull/87
+- deps(deps): bump github.com/ncruces/go-sqlite3 from 0.30.2 to 0.30.3 by @dependabot[bot] in https://github.com/pepabo/plusplusbot/pull/88
+- deps(deps): bump the aws-sdk-go-v2 group with 4 updates by @dependabot[bot] in https://github.com/pepabo/plusplusbot/pull/89
+- deps(deps): bump the aws-sdk-go-v2 group with 3 updates by @dependabot[bot] in https://github.com/pepabo/plusplusbot/pull/90
+- deps(deps): bump the aws-sdk-go-v2 group with 2 updates by @dependabot[bot] in https://github.com/pepabo/plusplusbot/pull/91
+- deps(deps): bump github.com/guregu/dynamo/v2 from 2.4.0 to 2.5.0 by @dependabot[bot] in https://github.com/pepabo/plusplusbot/pull/92
+- deps(deps): bump github.com/ncruces/go-sqlite3 from 0.30.3 to 0.30.4 by @dependabot[bot] in https://github.com/pepabo/plusplusbot/pull/93
+- deps(deps): bump the aws-sdk-go-v2 group with 4 updates by @dependabot[bot] in https://github.com/pepabo/plusplusbot/pull/94
+- deps(deps): bump github.com/aws/aws-sdk-go-v2/service/dynamodb from 1.53.6 to 1.54.0 in the aws-sdk-go-v2 group by @dependabot[bot] in https://github.com/pepabo/plusplusbot/pull/95
+- deps(deps): bump github.com/ncruces/go-sqlite3 from 0.30.4 to 0.30.5 by @dependabot[bot] in https://github.com/pepabo/plusplusbot/pull/96
+- deps(deps): bump github.com/aws/aws-sdk-go-v2/service/dynamodb from 1.54.0 to 1.55.0 in the aws-sdk-go-v2 group by @dependabot[bot] in https://github.com/pepabo/plusplusbot/pull/97
+- deps(deps): bump the aws-sdk-go-v2 group with 2 updates by @dependabot[bot] in https://github.com/pepabo/plusplusbot/pull/98
+- deps(deps): bump the aws-sdk-go-v2 group with 2 updates by @dependabot[bot] in https://github.com/pepabo/plusplusbot/pull/99
+- deps(deps): bump the aws-sdk-go-v2 group with 4 updates by @dependabot[bot] in https://github.com/pepabo/plusplusbot/pull/100
+- deps(deps): bump github.com/slack-go/slack from 0.17.3 to 0.18.0 by @dependabot[bot] in https://github.com/pepabo/plusplusbot/pull/101
+- deps(deps): bump the aws-sdk-go-v2 group with 4 updates by @dependabot[bot] in https://github.com/pepabo/plusplusbot/pull/102
+- deps(deps): bump github.com/slack-go/slack from 0.18.0 to 0.19.0 by @dependabot[bot] in https://github.com/pepabo/plusplusbot/pull/103
+- deps(deps): bump github.com/ncruces/go-sqlite3 from 0.30.5 to 0.31.0 by @dependabot[bot] in https://github.com/pepabo/plusplusbot/pull/104
+- deps(deps): bump github.com/ncruces/go-sqlite3 from 0.31.0 to 0.31.1 by @dependabot[bot] in https://github.com/pepabo/plusplusbot/pull/105
+- deps(deps): bump the aws-sdk-go-v2 group with 4 updates by @dependabot[bot] in https://github.com/pepabo/plusplusbot/pull/106
+- deps(deps): bump github.com/ncruces/go-sqlite3 from 0.31.1 to 0.32.0 by @dependabot[bot] in https://github.com/pepabo/plusplusbot/pull/107
+- deps(deps): bump github.com/aws/aws-sdk-go-v2/service/dynamodb from 1.56.2 to 1.57.0 in the aws-sdk-go-v2 group by @dependabot[bot] in https://github.com/pepabo/plusplusbot/pull/108
+- deps(deps): bump github.com/slack-go/slack from 0.19.0 to 0.20.0 by @dependabot[bot] in https://github.com/pepabo/plusplusbot/pull/109
+- deps(deps): bump the aws-sdk-go-v2 group with 4 updates by @dependabot[bot] in https://github.com/pepabo/plusplusbot/pull/110
+- deps(deps): bump the aws-sdk-go-v2 group with 2 updates by @dependabot[bot] in https://github.com/pepabo/plusplusbot/pull/111
+- fix: ターゲットとオペレーター検出を統合し誤検出を防止 by @haruotsu in https://github.com/pepabo/plusplusbot/pull/114
+
 ## [v1.1.4](https://github.com/pepabo/plusplusbot/compare/v1.1.3...v1.1.4) - 2025-09-01
 - deps(deps): bump github.com/slack-go/slack from 0.16.0 to 0.17.0 by @dependabot[bot] in https://github.com/pepabo/plusplusbot/pull/18
 - deps(deps): bump github.com/aws/aws-sdk-go-v2/config from 1.29.14 to 1.29.15 by @dependabot[bot] in https://github.com/pepabo/plusplusbot/pull/23
