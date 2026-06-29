@@ -169,6 +169,27 @@ func TestDetectPointOperation(t *testing.T) {
 			want: PointUp,
 		},
 		{
+			name: "Repeated plus (++++)",
+			text: "<@U123456> ++++",
+			want: PointUp,
+		},
+		{
+			name: "Emoji repeated plus",
+			text: ":sake: +++",
+			want: PointUp,
+		},
+		// 連打対応は + のみ。-- / == は従来どおり2文字ちょうど
+		{
+			name: "Repeated minus is not supported",
+			text: "<@U123456> ----",
+			want: NoOperation,
+		},
+		{
+			name: "Repeated equals is not supported",
+			text: "<@U123456> ====",
+			want: NoOperation,
+		},
+		{
 			name: "No operation",
 			text: "Hello world",
 			want: NoOperation,
@@ -244,10 +265,32 @@ func TestDetectOperationAndTarget(t *testing.T) {
 			wantTarget: "U123456",
 			wantIsUser: true,
 		},
+		// 連打 (repeated operators) should still register
+		{
+			name:       "User repeated plus",
+			text:       "<@U123456> ++++",
+			wantOp:     PointUp,
+			wantTarget: "U123456",
+			wantIsUser: true,
+		},
+		{
+			name:       "User repeated plus no space",
+			text:       "<@U123456>+++++++++",
+			wantOp:     PointUp,
+			wantTarget: "U123456",
+			wantIsUser: true,
+		},
 		// Normal cases: emoji
 		{
 			name:       "Emoji point up",
 			text:       ":sake: ++",
+			wantOp:     PointUp,
+			wantTarget: "sake",
+			wantIsUser: false,
+		},
+		{
+			name:       "Emoji repeated plus",
+			text:       ":sake: ++++",
 			wantOp:     PointUp,
 			wantTarget: "sake",
 			wantIsUser: false,
@@ -464,4 +507,3 @@ func TestDetectOperationAndTarget(t *testing.T) {
 		})
 	}
 }
-
