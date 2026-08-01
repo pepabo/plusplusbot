@@ -84,19 +84,22 @@ const (
 // Pre-compiled regexes for detecting point operations with targets
 var (
 	// User mention pattern: <@U123456> ++ (captures user ID and operator)
-	userOperationPattern = regexp.MustCompile(`<@([A-Z0-9]+)>[ 　]*(\+\+|-{2}|={2})[ 　]*($|\n)`)
+	userOperationPattern = regexp.MustCompile(`<@([A-Z0-9]+)>[ 　]*(\+{2,}|-{2}|={2})[ 　]*($|\n)`)
 	// Emoji pattern: :emoji: ++ (captures emoji name and operator)
-	emojiOperationPattern = regexp.MustCompile(`:([a-zA-Z0-9_+-]+):[ 　]*(\+\+|-{2}|={2})[ 　]*($|\n)`)
+	emojiOperationPattern = regexp.MustCompile(`:([a-zA-Z0-9_+-]+):[ 　]*(\+{2,}|-{2}|={2})[ 　]*($|\n)`)
 )
 
 // parseOperator converts an operator string to a PointOperation
 func parseOperator(op string) PointOperation {
-	switch op {
-	case "++":
+	if len(op) < 2 {
+		return NoOperation
+	}
+	switch op[0] {
+	case '+':
 		return PointUp
-	case "--":
+	case '-':
 		return PointDown
-	case "==":
+	case '=':
 		return PointCheck
 	default:
 		return NoOperation
