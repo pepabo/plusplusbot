@@ -1,6 +1,6 @@
 module plusplusbot
 
-go 1.25.0
+go 1.26
 
 require (
 	github.com/aws/aws-sdk-go-v2 v1.43.6
@@ -9,7 +9,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/dynamodb v1.63.3
 	github.com/guregu/dynamo/v2 v2.6.0
 	github.com/ncruces/go-sqlite3 v0.32.0
-	github.com/slack-go/slack v0.29.0
+	github.com/slack-go/slack v0.31.0
 )
 
 require (
