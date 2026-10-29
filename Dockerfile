@@ -8,7 +8,7 @@ RUN go mod download
 COPY . .
 RUN CGO_ENABLED=0 go build -ldflags="-s -w" -trimpath -o plusplusbot .
 
-FROM gcr.io/distroless/static-debian12
+FROM gcr.io/distroless/static-debian13
 
 LABEL org.opencontainers.image.source=https://github.com/pepabo/plusplusbot
 
